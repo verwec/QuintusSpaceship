@@ -49,6 +49,9 @@ var Q = Quintus()
     },
     step: function(dt){
       this.p.y -= this.p.speed * dt;
+      if (this.p.y < 0) {
+        this.destroy();
+      }
     }
   });
 
@@ -60,6 +63,14 @@ var Q = Quintus()
 
     extend: {
       handleFiring: function(dt){
+        var entity = this;
+
+        for (var i=entity.p.shots.length-1; i>=0; i--) {
+          if (entity.p.shots[i].isDestroyed) {
+              entity.p.shots.splice(i, 1);
+          }
+        }
+
         if (Q.inputs["fire"]){
           this.fire();
         }
