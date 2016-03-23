@@ -21,6 +21,7 @@ var Q = Quintus()
       });
       this.add("animation");
       this.play("default");
+      this.add("Gun");
     },
     step: function(dt){
       if (Q.inputs["left"]){
@@ -32,7 +33,7 @@ var Q = Quintus()
       }
 
       this.p.x = clamp(this.p.x, 0 + (this.p.w /2), Q.el.width - (this.p.w/2));
-      this.p.y = clamp(this.p.y, 0 + (this.p.h /2), Q.el.height - (this.p.h/2));
+      this.fire();
     }
   });
 
@@ -46,6 +47,25 @@ var Q = Quintus()
 
       this.add("animation");
       this.play("default");
+    },
+    step: function(dt){
+      this.p.y -= this.p.speed * dt;
+    }
+  });
+
+  Q.component("Gun", {
+    added: function(){
+      this.entity.p.shots = [];
+    },
+
+    extend: {
+      fire: function(){
+        if (Q.inputs['fire']) {
+          var entity = this;
+          var shot = Q.stage().insert(new Q.Shot({x: this.p.x, y: this.p.y - 50, speed: 200, type: Q.SPRITE_DEFAULT | Q.SPRITE_FRIENDLY}));
+          entity.p.shots.push(shot);
+        }
+      }
     }
   });
 
@@ -53,7 +73,6 @@ var Q = Quintus()
     Q.gravity=0;
     stage.insert(new Q.Sprite({ asset: 'back.png', x: Q.el.width/2, y: Q.el.height/2, type: Q.SPRITE_NONE }))
     stage.insert(new Q.Player());
-    stage.insert(new Q.Shot({x: 100, y: 100}));
   });
 
   Q.load(['back.png', 'player.png', 'player_anim.png', 'shot.png', 'player.json', 'shot.json'], function(){
