@@ -1,6 +1,12 @@
+
+var clamp = function(x, min, max){
+  return x < min ? min : (x > max ? max : x);
+}
+
 var Q = Quintus()
-  .include('Sprites, Anim')
-  .setup({ width: 800, height: 480 });
+  .include('Sprites, Anim, Input, Touch')
+  .setup({ width: 800, height: 480 })
+  .controls();
 
   Q.Sprite.extend('Player', {
     init: function(p){
@@ -14,6 +20,18 @@ var Q = Quintus()
       });
       this.add("animation");
       this.play("default");
+    },
+    step: function(dt){
+      if (Q.inputs["left"]){
+        this.p.x -= this.p.speed;
+      }
+
+      if (Q.inputs["right"]){
+        this.p.x += this.p.speed;
+      }
+
+      this.p.x = clamp(this.p.x, 0 + (this.p.w /2), Q.el.width - (this.p.w/2));
+      this.p.y = clamp(this.p.y, 0 + (this.p.h /2), Q.el.height - (this.p.h/2));
     }
   });
 
