@@ -58,6 +58,7 @@ var Q = Quintus()
   Q.component("Gun", {
     added: function(){
       this.entity.p.shots = [];
+      this.entity.p.canFire = true;
       this.entity.on('step', "handleFiring");
     },
 
@@ -78,8 +79,16 @@ var Q = Quintus()
 
       fire: function(){
         var entity = this;
+
+        if (!entity.p.canFire)
+          return;
+
         var shot = Q.stage().insert(new Q.Shot({x: this.p.x, y: this.p.y - 50, speed: 200, type: Q.SPRITE_DEFAULT | Q.SPRITE_FRIENDLY}));
         entity.p.shots.push(shot);
+        entity.p.canFire = false;
+        setTimeout(function(){
+          entity.p.canFire = true;
+        }, 500)
       }
     }
   });
