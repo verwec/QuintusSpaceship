@@ -33,7 +33,6 @@ var Q = Quintus()
       }
 
       this.p.x = clamp(this.p.x, 0 + (this.p.w /2), Q.el.width - (this.p.w/2));
-      this.fire();
     }
   });
 
@@ -56,15 +55,20 @@ var Q = Quintus()
   Q.component("Gun", {
     added: function(){
       this.entity.p.shots = [];
+      this.entity.on('step', "handleFiring");
     },
 
     extend: {
-      fire: function(){
-        if (Q.inputs['fire']) {
-          var entity = this;
-          var shot = Q.stage().insert(new Q.Shot({x: this.p.x, y: this.p.y - 50, speed: 200, type: Q.SPRITE_DEFAULT | Q.SPRITE_FRIENDLY}));
-          entity.p.shots.push(shot);
+      handleFiring: function(dt){
+        if (Q.inputs["fire"]){
+          this.fire();
         }
+      },
+
+      fire: function(){
+        var entity = this;
+        var shot = Q.stage().insert(new Q.Shot({x: this.p.x, y: this.p.y - 50, speed: 200, type: Q.SPRITE_DEFAULT | Q.SPRITE_FRIENDLY}));
+        entity.p.shots.push(shot);
       }
     }
   });
