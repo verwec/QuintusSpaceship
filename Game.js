@@ -36,14 +36,30 @@ var Q = Quintus()
     }
   });
 
+  Q.Sprite.extend("Shot", {
+    init: function(p) {
+      this._super(p, {
+        sprite: 'shot',
+        sheet: 'shot',
+        speed: 200
+      });
+
+      this.add("animation");
+      this.play("default");
+    }
+  });
+
   Q.scene("mainLevel", function(stage){
     Q.gravity=0;
     stage.insert(new Q.Sprite({ asset: 'back.png', x: Q.el.width/2, y: Q.el.height/2, type: Q.SPRITE_NONE }))
     stage.insert(new Q.Player());
+    stage.insert(new Q.Shot({x: 100, y: 100}));
   });
 
-  Q.load(['back.png', 'player.png', 'player_anim.png', 'player.json'], function(){
-    Q.compileSheets("player_anim.png", "player.json")
+  Q.load(['back.png', 'player.png', 'player_anim.png', 'shot.png', 'player.json', 'shot.json'], function(){
+    Q.compileSheets("player_anim.png", "player.json");
+    Q.compileSheets("shot.png", "shot.json");
     Q.animations("player", { default: { frames: [0,1,2,3], rate: 1/4 }});
+    Q.animations("shot", { default: { frames: [0,1,2,3], rate: 1/4 }});
     Q.stageScene("mainLevel");
   });
