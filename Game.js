@@ -55,6 +55,22 @@ var Q = Quintus()
     }
   });
 
+  Q.Sprite.extend("Alien", {
+    init: function(p){
+      this._super(p, {
+        sprite: "alien",
+        sheet: "alien",
+        x: Q.el.width/2,
+        speed: 200
+      });
+
+      this.p.y = this.p.h;
+
+      this.add("animation");
+      this.play("default");
+    }
+  });
+
   Q.component("Gun", {
     added: function(){
       this.entity.p.shots = [];
@@ -97,12 +113,15 @@ var Q = Quintus()
     Q.gravity=0;
     stage.insert(new Q.Sprite({ asset: 'back.png', x: Q.el.width/2, y: Q.el.height/2, type: Q.SPRITE_NONE }))
     stage.insert(new Q.Player());
+    stage.insert(new Q.Alien());
   });
 
-  Q.load(['back.png', 'player.png', 'player_anim.png', 'shot.png', 'player.json', 'shot.json'], function(){
+  Q.load(['back.png', 'player.png', 'player_anim.png', 'alien.png', 'shot.png', 'player.json', 'shot.json', 'alien.json'], function(){
     Q.compileSheets("player_anim.png", "player.json");
     Q.compileSheets("shot.png", "shot.json");
+    Q.compileSheets("alien.png", "alien.json");
     Q.animations("player", { default: { frames: [0,1,2,3], rate: 1/4 }});
     Q.animations("shot", { default: { frames: [0,1,2,3], rate: 1/4 }});
+    Q.animations("alien", { default: { frames: [0,1,2,3], rate: 1/4 }});
     Q.stageScene("mainLevel");
   });
