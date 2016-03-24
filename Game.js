@@ -89,18 +89,24 @@ var Q = Quintus()
           }
         }
 
-        if (Q.inputs["fire"]){
-          this.fire();
+        if (Q.inputs["fire"] && entity.p.type == Q.SPRITE_FRIENDLY){
+          this.fire(Q.SPRITE_FRIENDLY);
         }
       },
 
-      fire: function(){
+      fire: function(type){
         var entity = this;
 
         if (!entity.p.canFire)
           return;
 
-        var shot = Q.stage().insert(new Q.Shot({x: this.p.x, y: this.p.y - 50, speed: 200, type: Q.SPRITE_DEFAULT | Q.SPRITE_FRIENDLY}));
+        var shot;
+        if (type == Q.SPRITE_FRIENDLY) {
+          shot = Q.stage().insert(new Q.Shot({x: this.p.x, y: this.p.y - 50, speed: 200, type: Q.SPRITE_DEFAULT | Q.SPRITE_FRIENDLY}));
+        } else {
+          shot = Q.stage().insert(new Q.Shot({x: this.p.x, y: this.p.y + 50, speed: -200, type: Q.SPRITE_DEFAULT | Q.SPRITE_ENEMY}));
+        }
+
         entity.p.shots.push(shot);
         entity.p.canFire = false;
         setTimeout(function(){
@@ -114,6 +120,8 @@ var Q = Quintus()
     added: function(){
       this.entity.changeDirections();
       this.entity.on('step', 'move');
+      this.entity.on('step', 'tryToFire');
+      this.entity.add("Gun");
     },
     extend: {
       changeDirections: function(){
@@ -131,6 +139,16 @@ var Q = Quintus()
           entity.p.speed = -entity.p.speed;
 
         }
+      },
+
+      tryToFire: function(){
+        var entity = this;
+        var player = Q("Player").first();
+        if (!player)
+          return;
+
+        if (player.p.x + player.p.w > entity.p.x && player.p.x - player.p.w < entity.p.x)
+          this.fire(Q.SPRITE_ENEMY);
       }
     }
   });
