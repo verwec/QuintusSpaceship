@@ -68,6 +68,7 @@ var Q = Quintus()
 
       this.add("animation");
       this.play("default");
+      this.add("BasicAI");
     }
   });
 
@@ -105,6 +106,31 @@ var Q = Quintus()
         setTimeout(function(){
           entity.p.canFire = true;
         }, 500)
+      }
+    }
+  });
+
+  Q.component('BasicAI', {
+    added: function(){
+      this.entity.changeDirections();
+      this.entity.on('step', 'move');
+    },
+    extend: {
+      changeDirections: function(){
+        var entity = this;
+        var numberOfSeconds = Math.floor((Math.random()*5) + 1);
+        setTimeout(function(){
+          entity.p.speed = -entity.p.speed;
+          entity.changeDirections();
+        }, numberOfSeconds*1000);
+      },
+      move: function(dt){
+        var entity = this;
+        entity.p.x -= entity.p.speed*dt;
+        if (entity.p.x > Q.el.width - entity.p.w/2 || entity.p.x < entity.p.w/2){
+          entity.p.speed = -entity.p.speed;
+
+        }
       }
     }
   });
