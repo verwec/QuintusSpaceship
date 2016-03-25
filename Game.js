@@ -4,7 +4,7 @@ var clamp = function(x, min, max){
 }
 
 var Q = Quintus()
-  .include('Sprites, Anim, Input, Touch, Scenes')
+  .include('Sprites, Anim, Input, Touch, Scenes, UI')
   .setup({ width: 800, height: 480 })
   .controls()
   .touch();
@@ -26,6 +26,7 @@ var Q = Quintus()
         if((col.obj.p.type & Q.SPRITE_ENEMY) == Q.SPRITE_ENEMY){
           this.destroy();
           col.obj.destroy();
+          Q.stageScene("endGame", 1, { label: "You Died!" });
         }
       });
     },
@@ -80,6 +81,7 @@ var Q = Quintus()
         if((col.obj.p.type & Q.SPRITE_FRIENDLY) == Q.SPRITE_FRIENDLY){
           this.destroy();
           col.obj.destroy();
+          Q.stageScene("endGame", 1, { label: "Your Won!" });
         }
       });
     },
@@ -167,6 +169,26 @@ var Q = Quintus()
           this.fire(Q.SPRITE_ENEMY);
       }
     }
+  });
+
+  Q.scene("endGame", function(stage){
+    var container = stage.insert(new Q.UI.Container({
+      x: Q.width/2, y: Q.height/2, fill: '#D3D3D3'
+    }));
+
+    var button = container.insert(new Q.UI.Button({
+      x: 0, y: 0, fill: '#FFFFFF', label: 'Play Again'
+    }));
+
+    container.insert(new Q.UI.Text({
+      x: 10, y: -10 - button.p.h, label: stage.options.label
+    }));
+
+    button.on("click", function(){
+      Q.clearStages();
+      Q.stageScene("mainLevel");
+    });
+    container.fit(20);
   });
 
   Q.scene("mainLevel", function(stage){
