@@ -22,6 +22,12 @@ var Q = Quintus()
       this.add("animation");
       this.play("default");
       this.add("Gun");
+      this.on("hit", function(col){
+        if((col.obj.p.type & Q.SPRITE_ENEMY) == Q.SPRITE_ENEMY){
+          this.destroy();
+          col.obj.destroy();
+        }
+      });
     },
     step: function(dt){
       if (Q.inputs["left"]){
@@ -33,6 +39,7 @@ var Q = Quintus()
       }
 
       this.p.x = clamp(this.p.x, 0 + (this.p.w /2), Q.el.width - (this.p.w/2));
+      this.stage.collide(this);
     }
   });
 
@@ -69,6 +76,15 @@ var Q = Quintus()
       this.add("animation");
       this.play("default");
       this.add("BasicAI");
+      this.on("hit", function(col){
+        if((col.obj.p.type & Q.SPRITE_FRIENDLY) == Q.SPRITE_FRIENDLY){
+          this.destroy();
+          col.obj.destroy();
+        }
+      });
+    },
+    step: function(dt){
+      this.stage.collide(this);
     }
   });
 
@@ -155,7 +171,7 @@ var Q = Quintus()
 
   Q.scene("mainLevel", function(stage){
     Q.gravity=0;
-    stage.insert(new Q.Sprite({ asset: 'back.png', x: Q.el.width/2, y: Q.el.height/2, type: Q.SPRITE_NONE }))
+    //stage.insert(new Q.Sprite({ asset: 'back.png', x: Q.el.width/2, y: Q.el.height/2, type: Q.SPRITE_NONE }))
     stage.insert(new Q.Player());
     stage.insert(new Q.Alien());
   });
